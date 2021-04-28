@@ -1,4 +1,4 @@
-﻿$encodedapilink = 'https://graph.microsoft.com/v1.0/users?$select=userPrincipalName,assignedLicenses'
+$encodedapilink = 'https://graph.microsoft.com/v1.0/users?$select=userPrincipalName,assignedLicenses'
 $more = $true
 $listpower = [System.Collections.Generic.List[PSCustomObject]]::new()
 $list365 = [System.Collections.Generic.List[PSCustomObject]]::new()
@@ -12,7 +12,7 @@ Function ProcessData() {
     while($more)
     {  
         $data = Invoke-RestMethod -Uri $encodedapilink -Headers $Headers | Select '@odata.context','@odata.nextLink',value           
-
+        
         foreach($alert in $data.value)
         {   
             if($alert.assignedLicenses -ne $null -and $alert.assignedLicenses -ne "")
@@ -34,7 +34,7 @@ Function ProcessData() {
                 }                         
             }               
         }
-
+        
         if($data.'@odata.nextLink' -eq $null -or $data.'@odata.nextLink' -eq "")
         {
             $more = $false
@@ -44,17 +44,16 @@ Function ProcessData() {
             Write-Host "NEXT LINK"                        
             $encodedapilink = [System.Web.HttpUtility]::UrlDecode($data.'@odata.nextLink').Trim()                   
         }      
-    }
-           
+    }           
     return $body 
 }
 
 #Put together tenant info and request auth token
 $reqBody = @{
-    'tenant' = "bd79c313-cdf7-458e-aaf9-06e1d7fd1889"
-    'client_id' = "952c3322-edb2-41cb-82b4-6ff15c5c6d96"
+    'tenant' = *TENANT_ID*[redacted]
+    'client_id' = *CLIENT_ID*[redacted]
     'scope' = 'https://graph.microsoft.com/.default'
-    'client_secret' = "2HDBCw-DY83z9~0.nIo956KIg6cPD~.746"
+    'client_secret' = *CLIENT_SECRET*[redacted]
     'grant_type' = 'client_credentials'
 }
 
